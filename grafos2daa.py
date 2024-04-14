@@ -157,7 +157,7 @@ class Grafo:
                     f.write(f"  {padre} -> {nodo};\n")
             f.write("}")
     """
-    def generar_grafo_dfsi_gv(self, s, nombre_archivo):
+    def generar_arbol_dfsi_gv(self, s, nombre_archivo):
         visitados = self.DFS_I(s)
         with open(nombre_archivo, 'w') as f:
             f.write("digraph {\n")
