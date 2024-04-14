@@ -50,23 +50,37 @@ class Grafo:
             frontera = siguiente
             i += 1
         return visitados, nivel
-
+    """
     def DFS_R(self, s):
         visitados = {}
+        #visitados[s] = None
         self._DFS_R(s, visitados)
         return visitados
 
     def _DFS_R(self, u, visitados):
-        #print(f"Visitando nodo {u}")
+        print(f"Visitando nodo {u}")
+        if u in visitados:
+            return
         visitados[u] = None
         #visitados.append(u)
-        for arista in self.aristas[u]:            
+        for arista in self.aristas.get(u, []):         
             v = arista.destino.nombre
-            #print(f"Explorando arista de {u} a {v}")
+            print(f"Explorando arista de {u} a {v}")
             if v not in visitados:
-                #print(f" -> {v} no visitado, explorando...")
+                print(f" -> {v} no visitado, explorando...")
                 self._DFS_R(v, visitados)
+    """
+    def DFS_R(self, s):
+        return self._DFS_R(s, [])
 
+    def _DFS_R(self, u, visitados):
+        if u not in visitados:
+            visitados.append(u)
+            for arista in self.aristas.get(u, []):
+                v = arista.destino.nombre
+                self._DFS_R(v, visitados)
+        return visitados    
+    """
     def DFS_I(self, s):
         visitados = {}
         frontera = [s]
@@ -77,7 +91,20 @@ class Grafo:
                 for v in self.aristas[u]:
                     frontera.append(v.destino.nombre)
         return visitados
+    """
+    def DFS_I(self, s):
+        visitados = {}
+        stack = [s]
 
+        while stack:
+            nodo = stack.pop()
+            if nodo not in visitados:
+                visitados[nodo] = None
+                for arista in self.aristas.get(nodo, []):
+                    stack.append(arista.destino.nombre)
+
+        return list(visitados.keys())
+    
     def guardar_grafo(self, nombre_archivo):
         with open(nombre_archivo, 'w') as f:
             f.write("graph {\n")
@@ -95,10 +122,10 @@ class Grafo:
                 if padre is not None:
                     f.write(f"  {padre} -> {nodo};\n")
             f.write("}")
-
+    """
     def generar_arbol_dfsr_gv(self, s, nombre_archivo):
         visitados = self.DFS_R(s)
-        print(visitados)
+        #print(visitados)
         with open(nombre_archivo, 'w') as f:
             f.write("digraph {\n")
             #for nodo in self.nodos.values():
@@ -107,10 +134,20 @@ class Grafo:
                 if padre is not None:
                     f.write(f"  {padre} -> {nodo};\n")
             f.write("}")
-
+    """
+    def generar_arbol_dfsr_gv(self, s, nombre_archivo):
+        visitados = self.DFS_R(s)
+        with open(nombre_archivo, 'w') as f:
+            f.write("digraph {\n")
+            for nodo in self.nodos.values():
+                f.write(f"  {nodo.nombre};\n")
+            for i in range(1, len(visitados)):
+                f.write(f"  {visitados[i-1]} -> {visitados[i]};\n")
+            f.write("}")
+    """
     def generar_arbol_dfsi_gv(self, s, nombre_archivo):
         visitados = self.DFS_I(s)
-        print(visitados)
+        #print(visitados)
         with open(nombre_archivo, 'w') as f:
             f.write("digraph {\n")
             #for nodo in self.nodos.values():
@@ -118,6 +155,16 @@ class Grafo:
             for nodo, padre in visitados.items():
                 if padre is not None:
                     f.write(f"  {padre} -> {nodo};\n")
+            f.write("}")
+    """
+    def generar_grafo_dfsi_gv(self, s, nombre_archivo):
+        visitados = self.DFS_I(s)
+        with open(nombre_archivo, 'w') as f:
+            f.write("digraph {\n")
+            for nodo in self.nodos.values():
+                f.write(f"  {nodo.nombre};\n")
+            for i in range(1, len(visitados)):
+                f.write(f"  {visitados[i-1]} -> {visitados[i]};\n")
             f.write("}")
 
 def grafoMalla(m, n, dirigido=False):
