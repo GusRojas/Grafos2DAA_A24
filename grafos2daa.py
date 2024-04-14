@@ -57,13 +57,13 @@ class Grafo:
         return visitados
 
     def _DFS_R(self, u, visitados):
-        print(f"Visitando nodo {u}")
+        #print(f"Visitando nodo {u}")
         visitados[u] = None
-        for arista in self.aristas.get(u, []):            
+        for arista in self.aristas[u]:            
             v = arista.destino.nombre
-            print(f"Explorando arista de {u} a {v}")
+            #print(f"Explorando arista de {u} a {v}")
             if v not in visitados:
-                print(f" -> {v} no visitado, explorando...")
+                #print(f" -> {v} no visitado, explorando...")
                 self._DFS_R(v, visitados)
 
     def DFS_I(self, s):
@@ -85,8 +85,31 @@ class Grafo:
                     f.write(f"  {u} -- {v.destino.nombre};\n")
             f.write("}")
 
+    
+    def generar_arbol_bfs_gv(self, s, nombre_archivo):
+        visitados, nivel = self.BFS(s)
+        with open(nombre_archivo, 'w') as f:
+            f.write("digraph {\n")
+            for nodo, padre in visitados.items():
+                if padre is not None:
+                    f.write(f"  {padre} -> {nodo};\n")
+            f.write("}")
+
     def generar_arbol_dfsr_gv(self, s, nombre_archivo):
         visitados = self.DFS_R(s)
+        print(visitados)
+        with open(nombre_archivo, 'w') as f:
+            f.write("digraph {\n")
+            #for nodo in self.nodos.values():
+             #   f.write(f" {nodo.nombre};\n")
+            for nodo, padre in visitados.items():
+                if padre is not None:
+                    f.write(f"  {padre} -> {nodo};\n")
+            f.write("}")
+
+    def generar_arbol_dfsi_gv(self, s, nombre_archivo):
+        visitados = self.DFS_I(s)
+        print(visitados)
         with open(nombre_archivo, 'w') as f:
             f.write("digraph {\n")
             #for nodo in self.nodos.values():
@@ -205,12 +228,4 @@ def grafoDorogovtsevMendes(n, dirigido=False):
 
     return grafo
 
-def generar_arbol_bfs_gv(grafo, s, nombre_archivo):
-    visitados, nivel = grafo.BFS(s)
-    with open(nombre_archivo, 'w') as f:
-        f.write("digraph {\n")
-        for nodo, padre in visitados.items():
-            if padre is not None:
-                f.write(f"  {padre} -> {nodo};\n")
-        f.write("}")
 
