@@ -59,6 +59,7 @@ class Grafo:
     def _DFS_R(self, u, visitados):
         #print(f"Visitando nodo {u}")
         visitados[u] = None
+        #visitados.append(u)
         for arista in self.aristas[u]:            
             v = arista.destino.nombre
             #print(f"Explorando arista de {u} a {v}")
